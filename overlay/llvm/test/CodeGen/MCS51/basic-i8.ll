@@ -78,6 +78,20 @@ entry:
 ; CHECK: mov a, r7
 ; CHECK: ret
 
+define i8 @udiv_u8(i8 %a, i8 %b) {
+entry:
+  %quot = udiv i8 %a, %b
+  ret i8 %quot
+}
+
+; CHECK-LABEL: udiv_u8:
+; CHECK: mov a, r7
+; CHECK: mov b, r6
+; CHECK: div ab
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
 define i8 @ult_u8(i8 %a, i8 %b) {
 entry:
   %cmp = icmp ult i8 %a, %b
