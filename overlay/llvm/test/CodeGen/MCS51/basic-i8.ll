@@ -49,3 +49,71 @@ entry:
 ; CHECK: mov r7, a
 ; CHECK: mov a, r7
 ; CHECK: ret
+
+define i8 @ult_u8(i8 %a, i8 %b) {
+entry:
+  %cmp = icmp ult i8 %a, %b
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: ult_u8:
+; CHECK: mov a, r7
+; CHECK: clr c
+; CHECK: subb a, r6
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @ugt_u8(i8 %a, i8 %b) {
+entry:
+  %cmp = icmp ugt i8 %a, %b
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: ugt_u8:
+; CHECK: mov a, r6
+; CHECK: clr c
+; CHECK: subb a, r7
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @uge_imm_u8(i8 %a) {
+entry:
+  %cmp = icmp uge i8 %a, 5
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: uge_imm_u8:
+; CHECK: mov a, #4
+; CHECK: clr c
+; CHECK: subb a, r7
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @ule_imm_u8(i8 %a) {
+entry:
+  %cmp = icmp ule i8 %a, 5
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: ule_imm_u8:
+; CHECK: mov a, r7
+; CHECK: clr c
+; CHECK: subb a, #6
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret

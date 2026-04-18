@@ -88,6 +88,35 @@ void MCS51DAGToDAGISel::Select(SDNode *Node) {
     return;
   }
 
+  if (Node->getOpcode() == MCS51ISD::UCMP) {
+    SDLoc DL(Node);
+    SDValue LHS = Node->getOperand(0);
+    SDValue RHS = Node->getOperand(1);
+    SDValue Flags = Node->getOperand(2);
+    EVT ResultVT = Node->getValueType(0);
+    const bool IsBoolResult = ResultVT == MVT::i1;
+    const unsigned RROpc = IsBoolResult ? MCS51::UCMP1rr : MCS51::UCMP8rr;
+    const unsigned RIOpc = IsBoolResult ? MCS51::UCMP1ri : MCS51::UCMP8ri;
+    const unsigned IROpc = IsBoolResult ? MCS51::UCMP1ir : MCS51::UCMP8ir;
+
+    if (auto *RHSImm = dyn_cast<ConstantSDNode>(RHS)) {
+      SDValue TargetImm =
+          CurDAG->getTargetConstant(RHSImm->getSExtValue(), DL, MVT::i8);
+      CurDAG->SelectNodeTo(Node, RIOpc, ResultVT, LHS, TargetImm, Flags);
+      return;
+    }
+
+    if (auto *LHSImm = dyn_cast<ConstantSDNode>(LHS)) {
+      SDValue TargetImm =
+          CurDAG->getTargetConstant(LHSImm->getSExtValue(), DL, MVT::i8);
+      CurDAG->SelectNodeTo(Node, IROpc, ResultVT, TargetImm, RHS, Flags);
+      return;
+    }
+
+    CurDAG->SelectNodeTo(Node, RROpc, ResultVT, LHS, RHS, Flags);
+    return;
+  }
+
   if (Node->getSimpleValueType(0) == MVT::i8) {
     switch (Node->getOpcode()) {
     case ISD::ADD:

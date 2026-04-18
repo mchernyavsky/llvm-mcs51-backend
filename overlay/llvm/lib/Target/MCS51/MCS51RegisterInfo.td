@@ -29,6 +29,7 @@ def SP  : MCS51Reg<11, "sp">;
 def PC  : MCS51Reg<12, "pc">;
 
 def GPR8 : RegisterClass<"MCS51", [i8], 8, (add R7, R6, R5, R4, R3, R2, R1, R0)>;
+def GPR1 : RegisterClass<"MCS51", [i1], 8, (add R7, R6, R5, R4, R3, R2, R1, R0)>;
 def ACC8 : RegisterClass<"MCS51", [i8], 8, (add A)> {
   let CopyCost = -1;
 }

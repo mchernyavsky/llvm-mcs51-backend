@@ -19,6 +19,11 @@ class MCS51TargetLowering : public TargetLowering {
 public:
   MCS51TargetLowering(const TargetMachine &TM, const MCS51Subtarget &STI);
 
+  EVT getSetCCResultType(const DataLayout &DL, LLVMContext &Context,
+                         EVT VT) const override;
+
+  SDValue LowerOperation(SDValue Op, SelectionDAG &DAG) const override;
+
   bool CanLowerReturn(CallingConv::ID CallConv, MachineFunction &MF,
                       bool IsVarArg,
                       const SmallVectorImpl<ISD::OutputArg> &Outs,
@@ -34,6 +39,12 @@ public:
                       const SmallVectorImpl<ISD::OutputArg> &Outs,
                       const SmallVectorImpl<SDValue> &OutVals,
                       const SDLoc &DL, SelectionDAG &DAG) const override;
+
+private:
+  SDValue LowerSetCC(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerSelect(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerSelectCC(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerZeroExtend(SDValue Op, SelectionDAG &DAG) const;
 };
 
 } // namespace llvm
