@@ -62,6 +62,8 @@ def SUB8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "",
                          [(set GPR8:$dst, (sub GPR8:$lhs, imm:$rhs))]>;
 def DIV8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
                          [(set GPR8:$dst, (udiv GPR8:$lhs, GPR8:$rhs))]>;
+def REM8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
+                         [(set GPR8:$dst, (urem GPR8:$lhs, GPR8:$rhs))]>;
 
 def CMP8rr : MCS51Pseudo<(outs GPR8:$dst),
                          (ins GPR8:$lhs, GPR8:$rhs, i8imm:$flags)>;
@@ -104,6 +106,11 @@ let Defs = [A, B, PSW], Uses = [A, B] in
 
 let Uses = [A], isAsCheapAsAMove = 1 in
   def MOVR_a : MCS51Inst<"mov $dst, a", (outs GPR8:$dst), (ins)>;
+
+let Uses = [B], isAsCheapAsAMove = 1 in
+  def MOVR_b : MCS51Inst<"mov $dst, b", (outs GPR8:$dst), (ins)> {
+    let Size = 2;
+  }
 
 let Defs = [A], Uses = [A] in {
   def ADDA_r : MCS51Inst<"add a, $src", (outs), (ins GPR8:$src)>;
