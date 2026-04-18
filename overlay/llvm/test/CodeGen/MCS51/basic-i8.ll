@@ -153,3 +153,38 @@ entry:
 ; CHECK: mov r7, a
 ; CHECK: mov a, r7
 ; CHECK: ret
+
+define i8 @eq_u8(i8 %a, i8 %b) {
+entry:
+  %cmp = icmp eq i8 %a, %b
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: eq_u8:
+; CHECK: mov a, r7
+; CHECK: xrl a, r6
+; CHECK: add a, #255
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: xrl a, #1
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @ne_imm_u8(i8 %a) {
+entry:
+  %cmp = icmp ne i8 %a, 200
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: ne_imm_u8:
+; CHECK: mov a, r7
+; CHECK: xrl a, #-56
+; CHECK: add a, #255
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
