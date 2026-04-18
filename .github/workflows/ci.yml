@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
-      CCACHE_DIR: ~/.cache/ccache
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
       CCACHE_BASEDIR: ${{ github.workspace }}
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
@@ -41,10 +41,13 @@ jobs:
       - name: Install Python dependencies
         run: python -m pip install --upgrade pip pyelftools
 
+      - name: Prepare ccache directory
+        run: mkdir -p "$CCACHE_DIR"
+
       - name: Restore ccache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/ccache
+          path: ${{ github.workspace }}/.ccache
           key: ccache-${{ runner.os }}-${{ hashFiles('.github/workflows/ci.yml', 'scripts/build_llvm.py', 'scripts/bootstrap_llvm.py', 'scripts/test.py', 'scripts/common.py', 'overlay/**', 'tests/e2e/**') }}
           restore-keys: |
             ccache-${{ runner.os }}-
