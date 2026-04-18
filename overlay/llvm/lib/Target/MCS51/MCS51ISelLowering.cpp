@@ -93,6 +93,11 @@ EVT MCS51TargetLowering::getSetCCResultType(const DataLayout &DL,
   return MVT::i1;
 }
 
+bool MCS51TargetLowering::isIntDivCheap(EVT VT, AttributeList Attr) const {
+  (void)Attr;
+  return VT == MVT::i8;
+}
+
 SDValue MCS51TargetLowering::LowerOperation(SDValue Op,
                                             SelectionDAG &DAG) const {
   switch (Op.getOpcode()) {

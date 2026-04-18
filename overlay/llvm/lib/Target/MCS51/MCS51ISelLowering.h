@@ -22,6 +22,8 @@ public:
   EVT getSetCCResultType(const DataLayout &DL, LLVMContext &Context,
                          EVT VT) const override;
 
+  bool isIntDivCheap(EVT VT, AttributeList Attr) const override;
+
   SDValue LowerOperation(SDValue Op, SelectionDAG &DAG) const override;
 
   bool CanLowerReturn(CallingConv::ID CallConv, MachineFunction &MF,

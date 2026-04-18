@@ -84,6 +84,20 @@
     "expected": 3
   },
   {
+    "name": "udiv_imm_u8",
+    "file": "udiv_imm_u8.c",
+    "function": "udiv_imm_u8",
+    "args": [250],
+    "expected": 19
+  },
+  {
+    "name": "urem_imm_u8",
+    "file": "urem_imm_u8.c",
+    "function": "urem_imm_u8",
+    "args": [250],
+    "expected": 3
+  },
+  {
     "name": "const_42",
     "file": "const_42.c",
     "function": "const_42",
