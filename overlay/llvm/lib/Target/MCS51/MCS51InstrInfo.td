@@ -60,6 +60,7 @@ def SUB8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
                          [(set GPR8:$dst, (sub GPR8:$lhs, GPR8:$rhs))]>;
 def SUB8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "",
                          [(set GPR8:$dst, (sub GPR8:$lhs, imm:$rhs))]>;
+def SHL8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "">;
 def DIV8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
                          [(set GPR8:$dst, (udiv GPR8:$lhs, GPR8:$rhs))]>;
 def REM8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
