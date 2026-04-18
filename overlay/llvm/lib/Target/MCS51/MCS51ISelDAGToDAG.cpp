@@ -32,6 +32,7 @@ public:
 private:
   bool selectBinaryI8(SDNode *Node, unsigned RegOpc, unsigned ImmOpc,
                       bool IsCommutable);
+  bool selectDivRemI8(SDNode *Node, unsigned RegOpc);
   void SelectCode(SDNode *Node);
 };
 
@@ -79,6 +80,22 @@ bool MCS51DAGToDAGISel::selectBinaryI8(SDNode *Node, unsigned RegOpc,
       return selectImm(RHS, C);
 
   CurDAG->SelectNodeTo(Node, RegOpc, MVT::i8, LHS, RHS);
+  return true;
+}
+
+bool MCS51DAGToDAGISel::selectDivRemI8(SDNode *Node, unsigned RegOpc) {
+  SDLoc DL(Node);
+  SDValue Dividend = Node->getOperand(0);
+  SDValue Divisor = Node->getOperand(1);
+
+  if (auto *C = dyn_cast<ConstantSDNode>(Divisor)) {
+    SDValue TargetImm =
+        CurDAG->getTargetConstant(C->getSExtValue(), DL, MVT::i8);
+    SDNode *MoveImm = CurDAG->getMachineNode(MCS51::MOV8ri, DL, MVT::i8, TargetImm);
+    Divisor = SDValue(MoveImm, 0);
+  }
+
+  CurDAG->SelectNodeTo(Node, RegOpc, MVT::i8, Dividend, Divisor);
   return true;
 }
 
@@ -148,17 +165,13 @@ void MCS51DAGToDAGISel::Select(SDNode *Node) {
         return;
       break;
     case ISD::UDIV:
-      if (isa<ConstantSDNode>(Node->getOperand(1)))
-        break;
-      CurDAG->SelectNodeTo(Node, MCS51::DIV8rr, MVT::i8, Node->getOperand(0),
-                           Node->getOperand(1));
-      return;
+      if (selectDivRemI8(Node, MCS51::DIV8rr))
+        return;
+      break;
     case ISD::UREM:
-      if (isa<ConstantSDNode>(Node->getOperand(1)))
-        break;
-      CurDAG->SelectNodeTo(Node, MCS51::REM8rr, MVT::i8, Node->getOperand(0),
-                           Node->getOperand(1));
-      return;
+      if (selectDivRemI8(Node, MCS51::REM8rr))
+        return;
+      break;
     case ISD::OR:
       if (selectBinaryI8(Node, MCS51::OR8rr, MCS51::OR8ri, true))
         return;
