@@ -35,6 +35,27 @@
     "expected": 152
   },
   {
+    "name": "lshr1_u8_basic",
+    "file": "lshr1_u8.c",
+    "function": "lshr1_u8",
+    "args": [146],
+    "expected": 73
+  },
+  {
+    "name": "lshr1_u8_zero_fill",
+    "file": "lshr1_u8.c",
+    "function": "lshr1_u8",
+    "args": [225],
+    "expected": 112
+  },
+  {
+    "name": "lshr3_u8",
+    "file": "lshr3_u8.c",
+    "function": "lshr3_u8",
+    "args": [225],
+    "expected": 28
+  },
+  {
     "name": "xor_imm",
     "file": "xor_imm.c",
     "function": "xor_imm",
