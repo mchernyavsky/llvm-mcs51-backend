@@ -131,6 +131,16 @@ void MCS51DAGToDAGISel::Select(SDNode *Node) {
       if (selectBinaryI8(Node, MCS51::AND8rr, MCS51::AND8ri, true))
         return;
       break;
+    case ISD::SHL:
+      if (auto *ShiftAmt = dyn_cast<ConstantSDNode>(Node->getOperand(1))) {
+        SDLoc DL(Node);
+        SDValue TargetImm =
+            CurDAG->getTargetConstant(ShiftAmt->getSExtValue(), DL, MVT::i8);
+        CurDAG->SelectNodeTo(Node, MCS51::SHL8ri, MVT::i8,
+                             Node->getOperand(0), TargetImm);
+        return;
+      }
+      break;
     case ISD::MUL:
       if (selectBinaryI8(Node, MCS51::MUL8rr, MCS51::MUL8ri, true))
         return;

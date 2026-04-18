@@ -182,6 +182,18 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
   case MCS51::AND8ri:
     emitBinaryPseudo(MI, MCS51::ANLA_r, MCS51::ANLA_i);
     return;
+  case MCS51::SHL8ri: {
+    emitLoadA(MI->getOperand(1));
+    const int64_t ShiftCount = MI->getOperand(2).getImm();
+    if (ShiftCount < 0 || ShiftCount > 7)
+      report_fatal_error("MCS51 supports only constant i8 shifts in the range 0..7");
+    for (int64_t I = 0; I < ShiftCount; ++I) {
+      emitMCInst(MCS51::CLR_C, {});
+      emitMCInst(MCS51::RLC_A, {});
+    }
+    emitMoveAToReg(MI->getOperand(0).getReg());
+    return;
+  }
   case MCS51::MUL8rr:
   case MCS51::MUL8ri:
     emitLoadA(MI->getOperand(1));
