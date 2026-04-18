@@ -72,13 +72,13 @@ The backend currently supports a narrow but working subset:
 - leaf functions operating on `i8`
 - up to two arguments passed in `R7` and `R6`
 - `i8` return values in `A`
-- unsigned `icmp` ordering comparisons lowered to `0/1` results
+- `icmp eq/ne` and unsigned ordering comparisons lowered to `0/1` results
 - `add`, `sub`, `and`, `or`, `xor`, and integer constants
 - `llc -filetype=obj` for the supported subset
 - end-to-end verification from `C` source to machine code executed in `ucsim_51`
 
 ## Limitations
 
-- no stack frame support, spills, calls, branches, equality/signed compares, or general C ABI yet
+- no stack frame support, spills, calls, branches, signed compares, or general C ABI yet
 - the end-to-end harness currently accepts only relocation-free leaf functions from the supported subset
 - the Python image packer is a small test utility, not a general-purpose 8051 linker

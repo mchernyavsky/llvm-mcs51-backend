@@ -68,5 +68,19 @@
     "function": "ule_u8",
     "args": [7, 200],
     "expected": 1
+  },
+  {
+    "name": "eq_u8",
+    "file": "eq_u8.c",
+    "function": "eq_u8",
+    "args": [200, 200],
+    "expected": 1
+  },
+  {
+    "name": "ne_imm_u8",
+    "file": "ne_imm_u8.c",
+    "function": "ne_imm_u8",
+    "args": [7],
+    "expected": 1
   }
 ]
