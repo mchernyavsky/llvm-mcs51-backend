@@ -42,6 +42,10 @@ When a feature changes the supported subset, update all relevant surfaces togeth
 - Default workflow is one feature/fix per branch and one PR per branch.
 - Keep PRs narrow and traceable.
 - Do not merge without green CI.
+- After requesting Copilot review, do not merge only on the basis of green CI.
+- Copilot comments can arrive after checks pass, and in some cases even after a merge becomes available.
+- Before merging, confirm that the Copilot review was actually submitted and inspect thread-level review comments, not just the review summary.
+- If Copilot was requested, wait for the review to land or explicitly time out after a reasonable polling window before merging.
 - If a review comment points out a real functional gap, either fix it or track it in GitHub issues.
 
 ## Current Roadmap
