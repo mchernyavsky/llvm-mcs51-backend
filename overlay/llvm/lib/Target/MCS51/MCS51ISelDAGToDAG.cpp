@@ -141,7 +141,12 @@ void MCS51DAGToDAGISel::Select(SDNode *Node) {
       CurDAG->SelectNodeTo(Node, MCS51::DIV8rr, MVT::i8, Node->getOperand(0),
                            Node->getOperand(1));
       return;
-      break;
+    case ISD::UREM:
+      if (isa<ConstantSDNode>(Node->getOperand(1)))
+        break;
+      CurDAG->SelectNodeTo(Node, MCS51::REM8rr, MVT::i8, Node->getOperand(0),
+                           Node->getOperand(1));
+      return;
     case ISD::OR:
       if (selectBinaryI8(Node, MCS51::OR8rr, MCS51::OR8ri, true))
         return;

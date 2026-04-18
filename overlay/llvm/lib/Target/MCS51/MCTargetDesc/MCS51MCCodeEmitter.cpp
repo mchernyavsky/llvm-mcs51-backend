@@ -141,6 +141,10 @@ void MCS51MCCodeEmitter::encodeInstruction(const MCInst &MI,
   case MCS51::MOVR_a:
     emitByte(CB, static_cast<uint8_t>(0xF8u + getRegNum(MI, 0)));
     return;
+  case MCS51::MOVR_b:
+    emitByte(CB, static_cast<uint8_t>(0xA8u + getRegNum(MI, 0)));
+    emitByte(CB, 0xF0);
+    return;
   case MCS51::ADDA_r:
     emitByte(CB, static_cast<uint8_t>(0x28u + getRegNum(MI, 0)));
     return;

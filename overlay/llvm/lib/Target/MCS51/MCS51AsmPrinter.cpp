@@ -60,6 +60,10 @@ private:
     emitMCInst(MCS51::MOVR_a, {MCOperand::createReg(Dst)});
   }
 
+  void emitMoveBToReg(Register Dst) {
+    emitMCInst(MCS51::MOVR_b, {MCOperand::createReg(Dst)});
+  }
+
   void emitLoadA(const MachineOperand &Src) {
     if (Src.isReg()) {
       if (Src.getReg() == MCS51::A)
@@ -190,6 +194,12 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
     emitLoadB(MI->getOperand(2));
     emitMCInst(MCS51::DIV_AB, {});
     emitMoveAToReg(MI->getOperand(0).getReg());
+    return;
+  case MCS51::REM8rr:
+    emitLoadA(MI->getOperand(1));
+    emitLoadB(MI->getOperand(2));
+    emitMCInst(MCS51::DIV_AB, {});
+    emitMoveBToReg(MI->getOperand(0).getReg());
     return;
   case MCS51::OR8rr:
   case MCS51::OR8ri:
