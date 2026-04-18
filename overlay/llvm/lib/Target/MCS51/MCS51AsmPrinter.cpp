@@ -36,7 +36,9 @@ public:
   static char ID;
 
 private:
-  static bool isGPR8(Register Reg) { return MCS51::GPR8RegClass.contains(Reg); }
+  static bool isGPRReg(Register Reg) {
+    return MCS51::GPR8RegClass.contains(Reg) || MCS51::GPR1RegClass.contains(Reg);
+  }
 
   static MCOperand lowerPseudoOperand(const MachineOperand &MO) {
     if (MO.isReg())
@@ -85,26 +87,37 @@ private:
     emitMoveAToReg(MI->getOperand(0).getReg());
   }
 
-  void emitUnsignedComparePseudo(const MachineInstr *MI) {
+  void emitComparePseudo(const MachineInstr *MI) {
     const uint8_t Flags = static_cast<uint8_t>(MI->getOperand(3).getImm());
     const MachineOperand &LHS = MI->getOperand(1);
     const MachineOperand &RHS = MI->getOperand(2);
-    const MachineOperand &First =
-        (Flags & MCS51UCmpFlags::SwapOperands) ? RHS : LHS;
-    const MachineOperand &Second =
-        (Flags & MCS51UCmpFlags::SwapOperands) ? LHS : RHS;
+    if (Flags & MCS51CmpFlags::UseXorNonZero) {
+      emitLoadA(LHS);
+      if (RHS.isReg())
+        emitMCInst(MCS51::XRLA_r, {lowerPseudoOperand(RHS)});
+      else if (RHS.isImm())
+        emitMCInst(MCS51::XRLA_i, {lowerPseudoOperand(RHS)});
+      else
+        report_fatal_error("Unsupported MCS51 equality comparison RHS");
+      emitMCInst(MCS51::ADDA_i, {MCOperand::createImm(0xFF)});
+    } else {
+      const MachineOperand &First =
+          (Flags & MCS51CmpFlags::SwapOperands) ? RHS : LHS;
+      const MachineOperand &Second =
+          (Flags & MCS51CmpFlags::SwapOperands) ? LHS : RHS;
 
-    emitLoadA(First);
-    emitMCInst(MCS51::CLR_C, {});
-    if (Second.isReg())
-      emitMCInst(MCS51::SUBBA_r, {lowerPseudoOperand(Second)});
-    else if (Second.isImm())
-      emitMCInst(MCS51::SUBBA_i, {lowerPseudoOperand(Second)});
-    else
-      report_fatal_error("Unsupported MCS51 comparison RHS");
+      emitLoadA(First);
+      emitMCInst(MCS51::CLR_C, {});
+      if (Second.isReg())
+        emitMCInst(MCS51::SUBBA_r, {lowerPseudoOperand(Second)});
+      else if (Second.isImm())
+        emitMCInst(MCS51::SUBBA_i, {lowerPseudoOperand(Second)});
+      else
+        report_fatal_error("Unsupported MCS51 comparison RHS");
+    }
     emitMCInst(MCS51::CLR_A, {});
     emitMCInst(MCS51::RLC_A, {});
-    if (Flags & MCS51UCmpFlags::InvertResult)
+    if (Flags & MCS51CmpFlags::InvertResult)
       emitMCInst(MCS51::XRLA_i, {MCOperand::createImm(1)});
     emitMoveAToReg(MI->getOperand(0).getReg());
   }
@@ -129,11 +142,11 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
       emitLoadA(Src);
       return;
     }
-    if (Src.getReg() == MCS51::A && isGPR8(Dst.getReg())) {
+    if (Src.getReg() == MCS51::A && isGPRReg(Dst.getReg())) {
       emitMoveAToReg(Dst.getReg());
       return;
     }
-    if (isGPR8(Dst.getReg()) && isGPR8(Src.getReg())) {
+    if (isGPRReg(Dst.getReg()) && isGPRReg(Src.getReg())) {
       emitLoadA(Src);
       emitMoveAToReg(Dst.getReg());
       return;
@@ -173,13 +186,13 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
       report_fatal_error("Unsupported MCS51 subtraction RHS");
     emitMoveAToReg(MI->getOperand(0).getReg());
     return;
-  case MCS51::UCMP8rr:
-  case MCS51::UCMP8ri:
-  case MCS51::UCMP8ir:
-  case MCS51::UCMP1rr:
-  case MCS51::UCMP1ri:
-  case MCS51::UCMP1ir:
-    emitUnsignedComparePseudo(MI);
+  case MCS51::CMP8rr:
+  case MCS51::CMP8ri:
+  case MCS51::CMP8ir:
+  case MCS51::CMP1rr:
+  case MCS51::CMP1ri:
+  case MCS51::CMP1ir:
+    emitComparePseudo(MI);
     return;
   }
 

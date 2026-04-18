@@ -20,26 +20,30 @@ using namespace llvm;
 
 namespace {
 
-uint8_t getUnsignedCompareFlags(ISD::CondCode CC) {
+uint8_t getCompareFlags(ISD::CondCode CC) {
   switch (CC) {
+  case ISD::SETEQ:
+    return MCS51CmpFlags::UseXorNonZero | MCS51CmpFlags::InvertResult;
+  case ISD::SETNE:
+    return MCS51CmpFlags::UseXorNonZero;
   case ISD::SETULT:
-    return MCS51UCmpFlags::None;
+    return MCS51CmpFlags::None;
   case ISD::SETUGE:
-    return MCS51UCmpFlags::InvertResult;
+    return MCS51CmpFlags::InvertResult;
   case ISD::SETUGT:
-    return MCS51UCmpFlags::SwapOperands;
+    return MCS51CmpFlags::SwapOperands;
   case ISD::SETULE:
-    return MCS51UCmpFlags::SwapOperands | MCS51UCmpFlags::InvertResult;
+    return MCS51CmpFlags::SwapOperands | MCS51CmpFlags::InvertResult;
   default:
     report_fatal_error(
-        "MCS51 MVP backend supports only unsigned i8 ordering comparisons");
+        "MCS51 MVP backend supports only i8 eq/ne and unsigned ordering comparisons");
   }
 }
 
-SDValue emitUnsignedCompareMaterialization(SelectionDAG &DAG, const SDLoc &DL,
-                                          EVT ResultVT, SDValue LHS,
-                                          SDValue RHS, uint8_t Flags) {
-  return DAG.getNode(MCS51ISD::UCMP, DL, ResultVT, LHS, RHS,
+SDValue emitCompareMaterialization(SelectionDAG &DAG, const SDLoc &DL,
+                                   EVT ResultVT, SDValue LHS, SDValue RHS,
+                                   uint8_t Flags) {
+  return DAG.getNode(MCS51ISD::CMP, DL, ResultVT, LHS, RHS,
                      DAG.getTargetConstant(Flags, DL, MVT::i8));
 }
 
@@ -105,11 +109,11 @@ SDValue MCS51TargetLowering::LowerSetCC(SDValue Op,
   if (Op.getOperand(0).getValueType() != MVT::i8 ||
       Op.getOperand(1).getValueType() != MVT::i8)
     report_fatal_error(
-        "MCS51 MVP backend supports only i8 ordering comparisons");
+        "MCS51 MVP backend supports only i8 eq/ne and unsigned ordering comparisons");
 
-  return emitUnsignedCompareMaterialization(
+  return emitCompareMaterialization(
       DAG, SDLoc(Op), Op.getValueType(), Op.getOperand(0), Op.getOperand(1),
-      getUnsignedCompareFlags(cast<CondCodeSDNode>(Op.getOperand(2))->get()));
+      getCompareFlags(cast<CondCodeSDNode>(Op.getOperand(2))->get()));
 }
 
 SDValue MCS51TargetLowering::LowerSelect(SDValue Op,
@@ -131,17 +135,16 @@ SDValue MCS51TargetLowering::LowerSelect(SDValue Op,
     report_fatal_error(
         "MCS51 MVP backend supports only selects driven by i8 setcc");
 
-  uint8_t Flags =
-      getUnsignedCompareFlags(cast<CondCodeSDNode>(SetCC.getOperand(2))->get());
+  uint8_t Flags = getCompareFlags(cast<CondCodeSDNode>(SetCC.getOperand(2))->get());
   if (TrueC->getZExtValue() == 0 && FalseC->getZExtValue() == 1)
-    Flags ^= MCS51UCmpFlags::InvertResult;
+    Flags ^= MCS51CmpFlags::InvertResult;
   else if (TrueC->getZExtValue() != 1 || FalseC->getZExtValue() != 0)
     report_fatal_error(
         "MCS51 MVP backend supports only select materialization to 0/1");
 
-  return emitUnsignedCompareMaterialization(DAG, SDLoc(Op), Op.getValueType(),
-                                            SetCC.getOperand(0),
-                                            SetCC.getOperand(1), Flags);
+  return emitCompareMaterialization(DAG, SDLoc(Op), Op.getValueType(),
+                                    SetCC.getOperand(0), SetCC.getOperand(1),
+                                    Flags);
 }
 
 SDValue MCS51TargetLowering::LowerSelectCC(SDValue Op,
@@ -157,17 +160,15 @@ SDValue MCS51TargetLowering::LowerSelectCC(SDValue Op,
     report_fatal_error(
         "MCS51 MVP backend supports only constant i8 select_cc results");
 
-  uint8_t Flags =
-      getUnsignedCompareFlags(cast<CondCodeSDNode>(Op.getOperand(4))->get());
+  uint8_t Flags = getCompareFlags(cast<CondCodeSDNode>(Op.getOperand(4))->get());
   if (TrueC->getZExtValue() == 0 && FalseC->getZExtValue() == 1)
-    Flags ^= MCS51UCmpFlags::InvertResult;
+    Flags ^= MCS51CmpFlags::InvertResult;
   else if (TrueC->getZExtValue() != 1 || FalseC->getZExtValue() != 0)
     report_fatal_error(
         "MCS51 MVP backend supports only select_cc materialization to 0/1");
 
-  return emitUnsignedCompareMaterialization(DAG, SDLoc(Op), Op.getValueType(),
-                                            Op.getOperand(0),
-                                            Op.getOperand(1), Flags);
+  return emitCompareMaterialization(DAG, SDLoc(Op), Op.getValueType(),
+                                    Op.getOperand(0), Op.getOperand(1), Flags);
 }
 
 SDValue MCS51TargetLowering::LowerZeroExtend(SDValue Op,
@@ -183,12 +184,12 @@ SDValue MCS51TargetLowering::LowerZeroExtend(SDValue Op,
   if (SetCC.getOperand(0).getValueType() != MVT::i8 ||
       SetCC.getOperand(1).getValueType() != MVT::i8)
     report_fatal_error(
-        "MCS51 MVP backend supports only i8 ordering comparisons");
+        "MCS51 MVP backend supports only i8 eq/ne and unsigned ordering comparisons");
 
-  return emitUnsignedCompareMaterialization(
+  return emitCompareMaterialization(
       DAG, SDLoc(Op), Op.getValueType(), SetCC.getOperand(0),
       SetCC.getOperand(1),
-      getUnsignedCompareFlags(cast<CondCodeSDNode>(SetCC.getOperand(2))->get()));
+      getCompareFlags(cast<CondCodeSDNode>(SetCC.getOperand(2))->get()));
 }
 
 bool MCS51TargetLowering::CanLowerReturn(

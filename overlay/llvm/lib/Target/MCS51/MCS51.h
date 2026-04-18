@@ -29,17 +29,18 @@ namespace MCS51ISD {
 enum NodeType : unsigned {
   FIRST_NUMBER = ISD::BUILTIN_OP_END,
   RET_FLAG,
-  UCMP
+  CMP
 };
 } // namespace MCS51ISD
 
-namespace MCS51UCmpFlags {
+namespace MCS51CmpFlags {
 enum Flags : uint8_t {
   None = 0,
   SwapOperands = 1u << 0,
   InvertResult = 1u << 1,
+  UseXorNonZero = 1u << 2,
 };
-} // namespace MCS51UCmpFlags
+} // namespace MCS51CmpFlags
 
 } // namespace llvm
 
