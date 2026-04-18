@@ -88,16 +88,16 @@ void MCS51DAGToDAGISel::Select(SDNode *Node) {
     return;
   }
 
-  if (Node->getOpcode() == MCS51ISD::UCMP) {
+  if (Node->getOpcode() == MCS51ISD::CMP) {
     SDLoc DL(Node);
     SDValue LHS = Node->getOperand(0);
     SDValue RHS = Node->getOperand(1);
     SDValue Flags = Node->getOperand(2);
     EVT ResultVT = Node->getValueType(0);
     const bool IsBoolResult = ResultVT == MVT::i1;
-    const unsigned RROpc = IsBoolResult ? MCS51::UCMP1rr : MCS51::UCMP8rr;
-    const unsigned RIOpc = IsBoolResult ? MCS51::UCMP1ri : MCS51::UCMP8ri;
-    const unsigned IROpc = IsBoolResult ? MCS51::UCMP1ir : MCS51::UCMP8ir;
+    const unsigned RROpc = IsBoolResult ? MCS51::CMP1rr : MCS51::CMP8rr;
+    const unsigned RIOpc = IsBoolResult ? MCS51::CMP1ri : MCS51::CMP8ri;
+    const unsigned IROpc = IsBoolResult ? MCS51::CMP1ir : MCS51::CMP8ir;
 
     if (auto *RHSImm = dyn_cast<ConstantSDNode>(RHS)) {
       SDValue TargetImm =

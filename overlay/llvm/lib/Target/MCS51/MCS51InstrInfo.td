@@ -57,18 +57,18 @@ def SUB8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
 def SUB8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "",
                          [(set GPR8:$dst, (sub GPR8:$lhs, imm:$rhs))]>;
 
-def UCMP8rr : MCS51Pseudo<(outs GPR8:$dst),
-                          (ins GPR8:$lhs, GPR8:$rhs, i8imm:$flags)>;
-def UCMP8ri : MCS51Pseudo<(outs GPR8:$dst),
-                          (ins GPR8:$lhs, i8imm:$rhs, i8imm:$flags)>;
-def UCMP8ir : MCS51Pseudo<(outs GPR8:$dst),
-                          (ins i8imm:$lhs, GPR8:$rhs, i8imm:$flags)>;
-def UCMP1rr : MCS51Pseudo<(outs GPR1:$dst),
-                          (ins GPR8:$lhs, GPR8:$rhs, i8imm:$flags)>;
-def UCMP1ri : MCS51Pseudo<(outs GPR1:$dst),
-                          (ins GPR8:$lhs, i8imm:$rhs, i8imm:$flags)>;
-def UCMP1ir : MCS51Pseudo<(outs GPR1:$dst),
-                          (ins i8imm:$lhs, GPR8:$rhs, i8imm:$flags)>;
+def CMP8rr : MCS51Pseudo<(outs GPR8:$dst),
+                         (ins GPR8:$lhs, GPR8:$rhs, i8imm:$flags)>;
+def CMP8ri : MCS51Pseudo<(outs GPR8:$dst),
+                         (ins GPR8:$lhs, i8imm:$rhs, i8imm:$flags)>;
+def CMP8ir : MCS51Pseudo<(outs GPR8:$dst),
+                         (ins i8imm:$lhs, GPR8:$rhs, i8imm:$flags)>;
+def CMP1rr : MCS51Pseudo<(outs GPR1:$dst),
+                         (ins GPR8:$lhs, GPR8:$rhs, i8imm:$flags)>;
+def CMP1ri : MCS51Pseudo<(outs GPR1:$dst),
+                         (ins GPR8:$lhs, i8imm:$rhs, i8imm:$flags)>;
+def CMP1ir : MCS51Pseudo<(outs GPR1:$dst),
+                         (ins i8imm:$lhs, GPR8:$rhs, i8imm:$flags)>;
 
 let Defs = [A], isAsCheapAsAMove = 1 in {
   def MOVA_r : MCS51Inst<"mov a, $src", (outs), (ins GPR8:$src)>;
