@@ -131,6 +131,10 @@ void MCS51DAGToDAGISel::Select(SDNode *Node) {
       if (selectBinaryI8(Node, MCS51::AND8rr, MCS51::AND8ri, true))
         return;
       break;
+    case ISD::MUL:
+      if (selectBinaryI8(Node, MCS51::MUL8rr, MCS51::MUL8ri, true))
+        return;
+      break;
     case ISD::OR:
       if (selectBinaryI8(Node, MCS51::OR8rr, MCS51::OR8ri, true))
         return;
