@@ -185,6 +185,21 @@ entry:
 ; CHECK: mov a, r7
 ; CHECK: ret
 
+define i8 @udiv_imm_highbit_u8(i8 %a) {
+entry:
+  %quot = udiv i8 %a, 200
+  ret i8 %quot
+}
+
+; CHECK-LABEL: udiv_imm_highbit_u8:
+; CHECK: mov [[HIGHDIV:r[0-6]]], #200
+; CHECK: mov a, r7
+; CHECK: mov b, [[HIGHDIV]]
+; CHECK: div ab
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
 define i8 @urem_imm_u8(i8 %a) {
 entry:
   %rem = urem i8 %a, 13
@@ -331,7 +346,7 @@ entry:
 
 ; CHECK-LABEL: ne_imm_u8:
 ; CHECK: mov a, r7
-; CHECK: xrl a, #-56
+; CHECK: xrl a, #200
 ; CHECK: add a, #255
 ; CHECK: clr a
 ; CHECK: rlc a

@@ -90,7 +90,7 @@ bool MCS51DAGToDAGISel::selectDivRemI8(SDNode *Node, unsigned RegOpc) {
 
   if (auto *C = dyn_cast<ConstantSDNode>(Divisor)) {
     SDValue TargetImm =
-        CurDAG->getTargetConstant(C->getSExtValue(), DL, MVT::i8);
+        CurDAG->getTargetConstant(C->getZExtValue() & 0xFF, DL, MVT::i8);
     SDNode *MoveImm = CurDAG->getMachineNode(MCS51::MOV8ri, DL, MVT::i8, TargetImm);
     Divisor = SDValue(MoveImm, 0);
   }
