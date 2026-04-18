@@ -1,0 +1,51 @@
+; RUN: llc -march=mcs51 -verify-machineinstrs -filetype=asm < %s | FileCheck %s
+
+define i8 @const_42() {
+entry:
+  ret i8 42
+}
+
+; CHECK-LABEL: const_42:
+; CHECK: mov r7, #42
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @add_u8(i8 %a, i8 %b) {
+entry:
+  %sum = add i8 %a, %b
+  ret i8 %sum
+}
+
+; CHECK-LABEL: add_u8:
+; CHECK: mov a, r7
+; CHECK: add a, r6
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @sub_u8(i8 %a, i8 %b) {
+entry:
+  %diff = sub i8 %a, %b
+  ret i8 %diff
+}
+
+; CHECK-LABEL: sub_u8:
+; CHECK: mov a, r7
+; CHECK: clr c
+; CHECK: subb a, r6
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @xor_imm(i8 %a) {
+entry:
+  %x = xor i8 %a, 90
+  ret i8 %x
+}
+
+; CHECK-LABEL: xor_imm:
+; CHECK: mov a, r7
+; CHECK: xrl a, #90
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "add_u8",
+    "file": "add_u8.c",
+    "function": "add_u8",
+    "args": [5, 10],
+    "expected": 15
+  },
+  {
+    "name": "sub_u8",
+    "file": "sub_u8.c",
+    "function": "sub_u8",
+    "args": [25, 3],
+    "expected": 22
+  },
+  {
+    "name": "xor_imm",
+    "file": "xor_imm.c",
+    "function": "xor_imm",
+    "args": [60],
+    "expected": 102
+  },
+  {
+    "name": "const_42",
+    "file": "const_42.c",
+    "function": "const_42",
+    "args": [],
+    "expected": 42
+  }
+]
