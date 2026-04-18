@@ -50,6 +50,34 @@ entry:
 ; CHECK: mov a, r7
 ; CHECK: ret
 
+define i8 @mul_u8(i8 %a, i8 %b) {
+entry:
+  %prod = mul i8 %a, %b
+  ret i8 %prod
+}
+
+; CHECK-LABEL: mul_u8:
+; CHECK: mov a, r7
+; CHECK: mov b, r6
+; CHECK: mul ab
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @mul_imm_u8(i8 %a) {
+entry:
+  %prod = mul i8 %a, 13
+  ret i8 %prod
+}
+
+; CHECK-LABEL: mul_imm_u8:
+; CHECK: mov a, r7
+; CHECK: mov b, #13
+; CHECK: mul ab
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
 define i8 @ult_u8(i8 %a, i8 %b) {
 entry:
   %cmp = icmp ult i8 %a, %b

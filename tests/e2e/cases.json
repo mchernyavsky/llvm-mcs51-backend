@@ -21,6 +21,13 @@
     "expected": 102
   },
   {
+    "name": "mul_u8",
+    "file": "mul_u8.c",
+    "function": "mul_u8",
+    "args": [20, 13],
+    "expected": 4
+  },
+  {
     "name": "const_42",
     "file": "const_42.c",
     "function": "const_42",
