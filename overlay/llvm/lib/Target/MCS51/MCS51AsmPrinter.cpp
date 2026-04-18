@@ -166,6 +166,18 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
   case MCS51::AND8ri:
     emitBinaryPseudo(MI, MCS51::ANLA_r, MCS51::ANLA_i);
     return;
+  case MCS51::MUL8rr:
+  case MCS51::MUL8ri:
+    emitLoadA(MI->getOperand(1));
+    if (MI->getOperand(2).isReg())
+      emitMCInst(MCS51::MOVB_r, {lowerPseudoOperand(MI->getOperand(2))});
+    else if (MI->getOperand(2).isImm())
+      emitMCInst(MCS51::MOVB_i, {lowerPseudoOperand(MI->getOperand(2))});
+    else
+      report_fatal_error("Unsupported MCS51 multiplication RHS");
+    emitMCInst(MCS51::MUL_AB, {});
+    emitMoveAToReg(MI->getOperand(0).getReg());
+    return;
   case MCS51::OR8rr:
   case MCS51::OR8ri:
     emitBinaryPseudo(MI, MCS51::ORLA_r, MCS51::ORLA_i);

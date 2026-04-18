@@ -50,6 +50,10 @@ let isCommutable = 1 in {
                            [(set GPR8:$dst, (xor GPR8:$lhs, GPR8:$rhs))]>;
   def XOR8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "",
                            [(set GPR8:$dst, (xor GPR8:$lhs, imm:$rhs))]>;
+  def MUL8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
+                           [(set GPR8:$dst, (mul GPR8:$lhs, GPR8:$rhs))]>;
+  def MUL8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "",
+                           [(set GPR8:$dst, (mul GPR8:$lhs, imm:$rhs))]>;
 }
 
 def SUB8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
@@ -78,8 +82,20 @@ let Defs = [A], isAsCheapAsAMove = 1 in {
   def CLR_A  : MCS51Inst<"clr a", (outs), (ins)>;
 }
 
+let Defs = [B], isAsCheapAsAMove = 1 in {
+  def MOVB_r : MCS51Inst<"mov b, $src", (outs), (ins GPR8:$src)> {
+    let Size = 2;
+  }
+  def MOVB_i : MCS51Inst<"mov b, $src", (outs), (ins i8imm:$src)> {
+    let Size = 3;
+  }
+}
+
 let Defs = [A, PSW], Uses = [A, PSW] in
   def RLC_A : MCS51Inst<"rlc a", (outs), (ins)>;
+
+let Defs = [A, B, PSW], Uses = [A, B] in
+  def MUL_AB : MCS51Inst<"mul ab", (outs), (ins)>;
 
 let Uses = [A], isAsCheapAsAMove = 1 in
   def MOVR_a : MCS51Inst<"mov $dst, a", (outs GPR8:$dst), (ins)>;
