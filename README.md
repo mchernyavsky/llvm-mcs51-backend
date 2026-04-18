@@ -26,9 +26,13 @@ The runtime pipeline tests LLVM output directly. The backend emits `MCS-51` mach
 3. A host-side tool extracts `.text` and the selected function symbol from that object and builds a flat ROM image in Intel HEX format.
 4. `ucsim_51` executes the image and the harness checks the final value written to port `P1`.
 
-## Quick Start
+## Testing
 
-Local execution:
+The project supports three validation paths:
+
+### 1. Local Toolchain Install
+
+Install the required tools on the host machine and run:
 
 ```bash
 make bootstrap
@@ -36,9 +40,21 @@ make build
 make test
 ```
 
-Build artifacts and generated test images are written to `out/`.
+### 2. Docker
 
-CI runs the same `make test` entrypoint on `ubuntu-24.04`, restoring both `ccache` and the LLVM build directory to speed up repeated LLVM rebuilds.
+If you do not want to install the toolchain locally, run the same test flow inside the provided container:
+
+```bash
+make docker-test
+```
+
+This builds the local Docker image and runs `make test` inside it.
+
+### 3. CI
+
+GitHub Actions runs the same `make test` entrypoint on `ubuntu-24.04`, restoring both `ccache` and the LLVM build directory to speed up repeated LLVM rebuilds.
+
+Build artifacts and generated test images are written to `out/`.
 
 ## Tooling
 
