@@ -26,5 +26,33 @@
     "function": "const_42",
     "args": [],
     "expected": 42
+  },
+  {
+    "name": "ult_u8",
+    "file": "ult_u8.c",
+    "function": "ult_u8",
+    "args": [3, 7],
+    "expected": 1
+  },
+  {
+    "name": "ugt_u8",
+    "file": "ugt_u8.c",
+    "function": "ugt_u8",
+    "args": [3, 7],
+    "expected": 0
+  },
+  {
+    "name": "uge_imm_u8",
+    "file": "uge_imm_u8.c",
+    "function": "uge_imm_u8",
+    "args": [5],
+    "expected": 1
+  },
+  {
+    "name": "ule_imm_u8",
+    "file": "ule_imm_u8.c",
+    "function": "ule_imm_u8",
+    "args": [6],
+    "expected": 0
   }
 ]
