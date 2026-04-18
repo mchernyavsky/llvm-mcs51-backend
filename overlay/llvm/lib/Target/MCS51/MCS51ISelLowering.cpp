@@ -71,7 +71,7 @@ MCS51TargetLowering::MCS51TargetLowering(const TargetMachine &TM,
   setOperationAction(ISD::ADD, MVT::i8, Legal);
   setOperationAction(ISD::SUB, MVT::i8, Legal);
   setOperationAction(ISD::AND, MVT::i8, Legal);
-  setOperationAction(ISD::SHL, MVT::i8, Legal);
+  setOperationAction(ISD::SHL, MVT::i8, Custom);
   setOperationAction(ISD::MUL, MVT::i8, Legal);
   setOperationAction(ISD::UDIV, MVT::i8, Legal);
   setOperationAction(ISD::UREM, MVT::i8, Legal);
@@ -95,6 +95,8 @@ EVT MCS51TargetLowering::getSetCCResultType(const DataLayout &DL,
 SDValue MCS51TargetLowering::LowerOperation(SDValue Op,
                                             SelectionDAG &DAG) const {
   switch (Op.getOpcode()) {
+  case ISD::SHL:
+    return LowerShiftLeft(Op, DAG);
   case ISD::SETCC:
     return LowerSetCC(Op, DAG);
   case ISD::SELECT:
@@ -106,6 +108,27 @@ SDValue MCS51TargetLowering::LowerOperation(SDValue Op,
   default:
     llvm_unreachable("unimplemented operand");
   }
+}
+
+SDValue MCS51TargetLowering::LowerShiftLeft(SDValue Op,
+                                            SelectionDAG &DAG) const {
+  if (Op.getValueType() != MVT::i8 || Op.getOperand(0).getValueType() != MVT::i8)
+    report_fatal_error(
+        "MCS51 MVP backend supports only constant-count i8 left shifts");
+
+  const auto *ShiftAmt = dyn_cast<ConstantSDNode>(Op.getOperand(1));
+  if (ShiftAmt == nullptr)
+    report_fatal_error(
+        "MCS51 MVP backend supports only constant-count i8 left shifts");
+
+  const int64_t ShiftCount = ShiftAmt->getSExtValue();
+  if (ShiftCount < 0 || ShiftCount > 7)
+    report_fatal_error(
+        "MCS51 MVP backend supports only constant-count i8 left shifts in the range 0..7");
+
+  SDLoc DL(Op);
+  return DAG.getNode(MCS51ISD::SHL, DL, Op.getValueType(), Op.getOperand(0),
+                     DAG.getTargetConstant(ShiftCount, DL, MVT::i8));
 }
 
 SDValue MCS51TargetLowering::LowerSetCC(SDValue Op,

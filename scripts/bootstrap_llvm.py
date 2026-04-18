@@ -48,9 +48,9 @@ def bootstrap() -> Path:
     backend_dst = src_dir / "llvm" / "lib" / "Target" / "MCS51"
     copy_overlay_tree(backend_src, backend_dst)
 
-    codegen_test_src = overlay_root() / "llvm" / "test" / "CodeGen" / "MCS51" / "basic-i8.ll"
-    codegen_test_dst = src_dir / "llvm" / "test" / "CodeGen" / "MCS51" / "basic-i8.ll"
-    copy_overlay_file(codegen_test_src, codegen_test_dst)
+    codegen_test_src = overlay_root() / "llvm" / "test" / "CodeGen" / "MCS51"
+    codegen_test_dst = src_dir / "llvm" / "test" / "CodeGen" / "MCS51"
+    copy_overlay_tree(codegen_test_src, codegen_test_dst)
 
     return src_dir
 

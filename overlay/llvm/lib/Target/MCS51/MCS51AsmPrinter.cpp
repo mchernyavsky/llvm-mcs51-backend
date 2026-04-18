@@ -186,7 +186,8 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
     emitLoadA(MI->getOperand(1));
     const int64_t ShiftCount = MI->getOperand(2).getImm();
     if (ShiftCount < 0 || ShiftCount > 7)
-      report_fatal_error("MCS51 supports only constant i8 shifts in the range 0..7");
+      report_fatal_error(
+          "MCS51 MVP backend supports only constant-count i8 left shifts in the range 0..7");
     for (int64_t I = 0; I < ShiftCount; ++I) {
       emitMCInst(MCS51::CLR_C, {});
       emitMCInst(MCS51::RLC_A, {});
