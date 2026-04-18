@@ -35,6 +35,13 @@
     "expected": 19
   },
   {
+    "name": "urem_u8",
+    "file": "urem_u8.c",
+    "function": "urem_u8",
+    "args": [250, 13],
+    "expected": 3
+  },
+  {
     "name": "const_42",
     "file": "const_42.c",
     "function": "const_42",
