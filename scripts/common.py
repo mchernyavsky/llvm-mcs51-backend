@@ -47,3 +47,11 @@ def ensure_tool(name: str) -> str:
     if path is None:
         raise SystemExit(f"Required tool not found in PATH: {name}")
     return path
+
+
+def ensure_any_tool(*names: str) -> str:
+    for name in names:
+        path = shutil.which(name)
+        if path is not None:
+            return path
+    raise SystemExit(f"Required tool not found in PATH: one of {', '.join(names)}")

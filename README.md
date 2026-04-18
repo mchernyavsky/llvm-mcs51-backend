@@ -50,7 +50,7 @@ Local runs require:
 - `cmake`
 - `ninja`
 - `clang`
-- `sdcc-ucsim`
+- `sdcc-ucsim` or another ucSim package that provides an 8051 simulator binary such as `ucsim_51` or `s51`
 
 Low-level entrypoints are also available if you want to run individual stages:
 

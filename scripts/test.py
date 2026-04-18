@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 from scripts.bootstrap_llvm import bootstrap
 from scripts.build_llvm import build
-from scripts.common import ensure_tool, llvm_build_dir, out_root, repo_root, run
+from scripts.common import ensure_any_tool, ensure_tool, llvm_build_dir, out_root, repo_root, run
 from tools.mcs51_flat_image import build_flat_image, write_intel_hex
 
 
@@ -84,7 +84,7 @@ def run_e2e_case(case: E2ECase) -> None:
         raise SystemExit(f"Missing llc binary: {llc}. Run build first.")
 
     clang = ensure_tool("clang")
-    ucsim = ensure_tool("ucsim_51")
+    ucsim = ensure_any_tool("ucsim_51", "s51")
 
     case_root = out_root() / "e2e" / case.name
     case_root.mkdir(parents=True, exist_ok=True)
