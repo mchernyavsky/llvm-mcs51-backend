@@ -38,7 +38,7 @@ make test
 
 Build artifacts and generated test images are written to `out/`.
 
-CI runs the same `make test` entrypoint on `ubuntu-24.04`.
+CI runs the same `make test` entrypoint on `ubuntu-24.04`, with `ccache` enabled to speed up repeated LLVM builds.
 
 ## Tooling
 

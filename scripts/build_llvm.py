@@ -34,21 +34,29 @@ def build() -> None:
     _ensure_compatible_build_dir(build_dir, src_dir)
     build_dir.mkdir(parents=True, exist_ok=True)
 
-    run(
-        [
-            "cmake",
-            "-G",
-            "Ninja",
-            "-S",
-            str(src_dir / "llvm"),
-            "-B",
-            str(build_dir),
-            "-DLLVM_ENABLE_PROJECTS=",
-            "-DLLVM_TARGETS_TO_BUILD=",
-            "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=MCS51",
-            "-DCMAKE_BUILD_TYPE=Release",
-        ]
-    )
+    configure_cmd = [
+        "cmake",
+        "-G",
+        "Ninja",
+        "-S",
+        str(src_dir / "llvm"),
+        "-B",
+        str(build_dir),
+        "-DLLVM_ENABLE_PROJECTS=",
+        "-DLLVM_TARGETS_TO_BUILD=",
+        "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=MCS51",
+        "-DCMAKE_BUILD_TYPE=Release",
+    ]
+    if shutil.which("ccache") is not None:
+        configure_cmd.extend(
+            [
+                "-DCMAKE_C_COMPILER_LAUNCHER=ccache",
+                "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
+                "-DCMAKE_ASM_COMPILER_LAUNCHER=ccache",
+            ]
+        )
+
+    run(configure_cmd)
     run(
         [
             "cmake",
