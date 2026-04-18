@@ -69,6 +69,38 @@ entry:
 ; CHECK: mov a, r7
 ; CHECK: ret
 
+define i8 @lshr1_u8(i8 %a) {
+entry:
+  %res = lshr i8 %a, 1
+  ret i8 %res
+}
+
+; CHECK-LABEL: lshr1_u8:
+; CHECK: mov a, r7
+; CHECK: clr c
+; CHECK: rrc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @lshr3_u8(i8 %a) {
+entry:
+  %res = lshr i8 %a, 3
+  ret i8 %res
+}
+
+; CHECK-LABEL: lshr3_u8:
+; CHECK: mov a, r7
+; CHECK: clr c
+; CHECK: rrc a
+; CHECK: clr c
+; CHECK: rrc a
+; CHECK: clr c
+; CHECK: rrc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
 define i8 @xor_imm(i8 %a) {
 entry:
   %x = xor i8 %a, 90

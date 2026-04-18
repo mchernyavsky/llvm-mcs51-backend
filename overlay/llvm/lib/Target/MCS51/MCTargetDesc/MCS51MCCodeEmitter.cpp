@@ -132,6 +132,9 @@ void MCS51MCCodeEmitter::encodeInstruction(const MCInst &MI,
   case MCS51::RLC_A:
     emitByte(CB, 0x33);
     return;
+  case MCS51::RRC_A:
+    emitByte(CB, 0x13);
+    return;
   case MCS51::MUL_AB:
     emitByte(CB, 0xA4);
     return;

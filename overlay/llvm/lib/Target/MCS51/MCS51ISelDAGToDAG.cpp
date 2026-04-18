@@ -123,6 +123,12 @@ void MCS51DAGToDAGISel::Select(SDNode *Node) {
     return;
   }
 
+  if (Node->getOpcode() == MCS51ISD::LSHR) {
+    CurDAG->SelectNodeTo(Node, MCS51::LSHR8ri, MVT::i8, Node->getOperand(0),
+                         Node->getOperand(1));
+    return;
+  }
+
   if (Node->getSimpleValueType(0) == MVT::i8) {
     switch (Node->getOpcode()) {
     case ISD::ADD:

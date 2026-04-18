@@ -42,6 +42,7 @@ public:
 
 private:
   SDValue LowerShiftLeft(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerLogicalShiftRight(SDValue Op, SelectionDAG &DAG) const;
   SDValue LowerSetCC(SDValue Op, SelectionDAG &DAG) const;
   SDValue LowerSelect(SDValue Op, SelectionDAG &DAG) const;
   SDValue LowerSelectCC(SDValue Op, SelectionDAG &DAG) const;

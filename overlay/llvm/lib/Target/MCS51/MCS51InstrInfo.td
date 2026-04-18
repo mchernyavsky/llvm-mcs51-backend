@@ -61,6 +61,7 @@ def SUB8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
 def SUB8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "",
                          [(set GPR8:$dst, (sub GPR8:$lhs, imm:$rhs))]>;
 def SHL8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "">;
+def LSHR8ri : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, i8imm:$rhs), "">;
 def DIV8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
                          [(set GPR8:$dst, (udiv GPR8:$lhs, GPR8:$rhs))]>;
 def REM8rr : MCS51Pseudo<(outs GPR8:$dst), (ins GPR8:$lhs, GPR8:$rhs), "",
@@ -98,6 +99,9 @@ let Defs = [B], isAsCheapAsAMove = 1 in {
 
 let Defs = [A, PSW], Uses = [A, PSW] in
   def RLC_A : MCS51Inst<"rlc a", (outs), (ins)>;
+
+let Defs = [A, PSW], Uses = [A, PSW] in
+  def RRC_A : MCS51Inst<"rrc a", (outs), (ins)>;
 
 let Defs = [A, B, PSW], Uses = [A, B] in
   def MUL_AB : MCS51Inst<"mul ab", (outs), (ins)>;
