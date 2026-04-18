@@ -14,6 +14,27 @@
     "expected": 22
   },
   {
+    "name": "shl1_u8_basic",
+    "file": "shl1_u8.c",
+    "function": "shl1_u8",
+    "args": [73],
+    "expected": 146
+  },
+  {
+    "name": "shl1_u8_trunc",
+    "file": "shl1_u8.c",
+    "function": "shl1_u8",
+    "args": [225],
+    "expected": 194
+  },
+  {
+    "name": "shl3_u8",
+    "file": "shl3_u8.c",
+    "function": "shl3_u8",
+    "args": [19],
+    "expected": 152
+  },
+  {
     "name": "xor_imm",
     "file": "xor_imm.c",
     "function": "xor_imm",

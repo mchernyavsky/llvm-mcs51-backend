@@ -73,7 +73,7 @@ The backend currently supports a narrow but working subset:
 - up to two arguments passed in `R7` and `R6`
 - `i8` return values in `A`
 - `icmp eq/ne` and unsigned ordering comparisons lowered to `0/1` results
-- `add`, `sub`, `mul` (low byte), `udiv`, `urem`, `and`, `or`, `xor`, and integer constants
+- `add`, `sub`, constant-count `shl`, `mul` (low byte), `udiv`, `urem`, `and`, `or`, `xor`, and integer constants
 - `llc -filetype=obj` for the supported subset
 - end-to-end verification from `C` source to machine code executed in `ucsim_51`
 
