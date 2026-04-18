@@ -74,6 +74,18 @@ private:
     report_fatal_error("Unsupported MCS51 accumulator load source");
   }
 
+  void emitLoadB(const MachineOperand &Src) {
+    if (Src.isReg()) {
+      emitMCInst(MCS51::MOVB_r, {MCOperand::createReg(Src.getReg())});
+      return;
+    }
+    if (Src.isImm()) {
+      emitMCInst(MCS51::MOVB_i, {MCOperand::createImm(Src.getImm())});
+      return;
+    }
+    report_fatal_error("Unsupported MCS51 B register load source");
+  }
+
   void emitBinaryPseudo(const MachineInstr *MI, unsigned AccRegOpcode,
                         unsigned AccImmOpcode) {
     emitLoadA(MI->getOperand(1));
@@ -169,13 +181,14 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
   case MCS51::MUL8rr:
   case MCS51::MUL8ri:
     emitLoadA(MI->getOperand(1));
-    if (MI->getOperand(2).isReg())
-      emitMCInst(MCS51::MOVB_r, {lowerPseudoOperand(MI->getOperand(2))});
-    else if (MI->getOperand(2).isImm())
-      emitMCInst(MCS51::MOVB_i, {lowerPseudoOperand(MI->getOperand(2))});
-    else
-      report_fatal_error("Unsupported MCS51 multiplication RHS");
+    emitLoadB(MI->getOperand(2));
     emitMCInst(MCS51::MUL_AB, {});
+    emitMoveAToReg(MI->getOperand(0).getReg());
+    return;
+  case MCS51::DIV8rr:
+    emitLoadA(MI->getOperand(1));
+    emitLoadB(MI->getOperand(2));
+    emitMCInst(MCS51::DIV_AB, {});
     emitMoveAToReg(MI->getOperand(0).getReg());
     return;
   case MCS51::OR8rr:

@@ -72,6 +72,7 @@ MCS51TargetLowering::MCS51TargetLowering(const TargetMachine &TM,
   setOperationAction(ISD::SUB, MVT::i8, Legal);
   setOperationAction(ISD::AND, MVT::i8, Legal);
   setOperationAction(ISD::MUL, MVT::i8, Legal);
+  setOperationAction(ISD::UDIV, MVT::i8, Legal);
   setOperationAction(ISD::OR, MVT::i8, Legal);
   setOperationAction(ISD::XOR, MVT::i8, Legal);
   setOperationAction(ISD::SETCC, MVT::i8, Custom);
