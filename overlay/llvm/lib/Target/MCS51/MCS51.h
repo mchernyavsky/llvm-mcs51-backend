@@ -9,6 +9,8 @@
 #ifndef LLVM_LIB_TARGET_MCS51_MCS51_H
 #define LLVM_LIB_TARGET_MCS51_MCS51_H
 
+#include <cstdint>
+
 #include "MCTargetDesc/MCS51MCTargetDesc.h"
 #include "llvm/CodeGen/MachineFunctionPass.h"
 #include "llvm/CodeGen/SelectionDAGNodes.h"
@@ -26,9 +28,18 @@ void initializeMCS51DAGToDAGISelLegacyPass(PassRegistry &);
 namespace MCS51ISD {
 enum NodeType : unsigned {
   FIRST_NUMBER = ISD::BUILTIN_OP_END,
-  RET_FLAG
+  RET_FLAG,
+  UCMP
 };
 } // namespace MCS51ISD
+
+namespace MCS51UCmpFlags {
+enum Flags : uint8_t {
+  None = 0,
+  SwapOperands = 1u << 0,
+  InvertResult = 1u << 1,
+};
+} // namespace MCS51UCmpFlags
 
 } // namespace llvm
 

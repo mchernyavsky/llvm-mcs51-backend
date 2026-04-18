@@ -84,6 +84,30 @@ private:
       report_fatal_error("Unsupported MCS51 binary pseudo RHS");
     emitMoveAToReg(MI->getOperand(0).getReg());
   }
+
+  void emitUnsignedComparePseudo(const MachineInstr *MI) {
+    const uint8_t Flags = static_cast<uint8_t>(MI->getOperand(3).getImm());
+    const MachineOperand &LHS = MI->getOperand(1);
+    const MachineOperand &RHS = MI->getOperand(2);
+    const MachineOperand &First =
+        (Flags & MCS51UCmpFlags::SwapOperands) ? RHS : LHS;
+    const MachineOperand &Second =
+        (Flags & MCS51UCmpFlags::SwapOperands) ? LHS : RHS;
+
+    emitLoadA(First);
+    emitMCInst(MCS51::CLR_C, {});
+    if (Second.isReg())
+      emitMCInst(MCS51::SUBBA_r, {lowerPseudoOperand(Second)});
+    else if (Second.isImm())
+      emitMCInst(MCS51::SUBBA_i, {lowerPseudoOperand(Second)});
+    else
+      report_fatal_error("Unsupported MCS51 comparison RHS");
+    emitMCInst(MCS51::CLR_A, {});
+    emitMCInst(MCS51::RLC_A, {});
+    if (Flags & MCS51UCmpFlags::InvertResult)
+      emitMCInst(MCS51::XRLA_i, {MCOperand::createImm(1)});
+    emitMoveAToReg(MI->getOperand(0).getReg());
+  }
 };
 
 } // namespace
@@ -148,6 +172,14 @@ void MCS51AsmPrinter::emitInstruction(const MachineInstr *MI) {
     else
       report_fatal_error("Unsupported MCS51 subtraction RHS");
     emitMoveAToReg(MI->getOperand(0).getReg());
+    return;
+  case MCS51::UCMP8rr:
+  case MCS51::UCMP8ri:
+  case MCS51::UCMP8ir:
+  case MCS51::UCMP1rr:
+  case MCS51::UCMP1ri:
+  case MCS51::UCMP1ir:
+    emitUnsignedComparePseudo(MI);
     return;
   }
 
