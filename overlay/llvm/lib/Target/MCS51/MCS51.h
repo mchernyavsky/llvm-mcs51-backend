@@ -29,7 +29,8 @@ namespace MCS51ISD {
 enum NodeType : unsigned {
   FIRST_NUMBER = ISD::BUILTIN_OP_END,
   RET_FLAG,
-  CMP
+  CMP,
+  SHL
 };
 } // namespace MCS51ISD
 

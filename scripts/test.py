@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 from dataclasses import dataclass
 
 from scripts.bootstrap_llvm import bootstrap
@@ -39,7 +40,9 @@ def run_codegen_tests() -> None:
     build_dir = llvm_build_dir()
     llc = build_dir / "bin" / "llc"
     filecheck = build_dir / "bin" / "FileCheck"
-    test_file = src_dir / "llvm" / "test" / "CodeGen" / "MCS51" / "basic-i8.ll"
+    test_dir = src_dir / "llvm" / "test" / "CodeGen" / "MCS51"
+    supported_test = test_dir / "basic-i8.ll"
+    unsupported_shift_test = test_dir / "unsupported-shl.ll"
     asm_file = build_dir / "basic-i8.s"
     obj_file = build_dir / "basic-i8.o"
 
@@ -57,10 +60,10 @@ def run_codegen_tests() -> None:
             "-filetype=asm",
             "-o",
             str(asm_file),
-            str(test_file),
+            str(supported_test),
         ]
     )
-    run([str(filecheck), str(test_file)], input_text=asm_file.read_text())
+    run([str(filecheck), str(supported_test)], input_text=asm_file.read_text())
     run(
         [
             str(llc),
@@ -70,11 +73,29 @@ def run_codegen_tests() -> None:
             "-filetype=obj",
             "-o",
             str(obj_file),
-            str(test_file),
+            str(supported_test),
         ]
     )
     if obj_file.stat().st_size == 0:
         raise SystemExit(f"Empty object file produced by llc: {obj_file}")
+
+    unsupported = subprocess.run(
+        [
+            str(llc),
+            "-march=mcs51",
+            "-mtriple=mcs51-unknown-elf",
+            "-verify-machineinstrs",
+            "-filetype=asm",
+            "-o",
+            str(build_dir / "unsupported-shl.s"),
+            str(unsupported_shift_test),
+        ],
+        text=True,
+        capture_output=True,
+    )
+    if unsupported.returncode == 0:
+        raise SystemExit("Expected unsupported-shl.ll to fail during llc")
+    run([str(filecheck), str(unsupported_shift_test)], input_text=unsupported.stderr)
 
 
 def run_e2e_case(case: E2ECase) -> None:
