@@ -35,6 +35,10 @@ def parse_p1(output: str) -> int:
     return int(matches[-1], 16)
 
 
+def is_crash_style_failure(returncode: int) -> bool:
+    return returncode < 0 or returncode >= 128
+
+
 def run_codegen_tests() -> None:
     src_dir = bootstrap()
     build_dir = llvm_build_dir()
@@ -95,7 +99,15 @@ def run_codegen_tests() -> None:
     )
     if unsupported.returncode == 0:
         raise SystemExit("Expected unsupported-shl.ll to fail during llc")
-    run([str(filecheck), str(unsupported_shift_test)], input_text=unsupported.stderr)
+    if not is_crash_style_failure(unsupported.returncode):
+        raise SystemExit(
+            "Expected unsupported-shl.ll to terminate via crash-style failure, "
+            f"got return code {unsupported.returncode}"
+        )
+    run(
+        [str(filecheck), str(unsupported_shift_test)],
+        input_text=unsupported.stdout + unsupported.stderr,
+    )
 
 
 def run_e2e_case(case: E2ECase) -> None:
