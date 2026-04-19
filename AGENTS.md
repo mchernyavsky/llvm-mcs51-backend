@@ -34,6 +34,9 @@ When a feature changes the supported subset, update all relevant surfaces togeth
 - codegen regression tests
 - end-to-end tests
 - `README.md` scope/limitations if user-visible support changed
+- `AGENTS.md` if recurring repo workflow guidance or contributor expectations changed
+
+Keep `AGENTS.md` and `README.md` current, but keep them concise. Add durable, high-signal guidance only; do not accumulate low-value reminders or transient worklog detail.
 
 ## Workflow Expectations
 
@@ -46,7 +49,10 @@ When a feature changes the supported subset, update all relevant surfaces togeth
 - Copilot comments can arrive after checks pass, and in some cases even after a merge becomes available.
 - Before merging, confirm that the Copilot review was actually submitted and inspect thread-level review comments, not just the review summary.
 - If Copilot was requested, wait for the review to land or explicitly time out after a reasonable polling window before merging.
+- Treat unresolved review threads as merge blockers until they are fixed or tracked in GitHub issues and explicitly resolved.
+- Before merging a PR that requested Copilot review, run `python3 -m scripts.check_review_threads --repo <owner/name> --pr <number> --require-copilot` and require it to pass.
 - If a review comment points out a real functional gap, either fix it or track it in GitHub issues.
+- If you run target-side checks directly against `out/llvm-build`, sync `overlay` into `out/llvm-src` first via `python3 -m scripts.bootstrap_llvm`.
 
 ## Current Roadmap
 
