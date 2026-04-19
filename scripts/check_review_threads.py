@@ -143,7 +143,7 @@ def main() -> None:
     parser.add_argument(
         "--wait-seconds",
         type=int,
-        default=180,
+        default=600,
         help="How long to wait for Copilot feedback when --require-copilot is set",
     )
     parser.add_argument(

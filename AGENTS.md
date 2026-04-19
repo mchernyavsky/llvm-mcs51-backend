@@ -51,6 +51,8 @@ Keep `AGENTS.md` and `README.md` current, but keep them concise. Add durable, hi
 - If Copilot was requested, wait for the review to land or explicitly time out after a reasonable polling window before merging.
 - Treat unresolved review threads as merge blockers until they are fixed or tracked in GitHub issues and explicitly resolved.
 - Before merging a PR that requested Copilot review, run `python3 -m scripts.check_review_threads --repo <owner/name> --pr <number> --require-copilot` and require it to pass.
+- Do not bypass a missing Copilot review by rerunning the check without `--require-copilot` immediately before merge.
+- If CI is green but Copilot review has not landed yet, leave the PR open and poll again later; prefer a longer wait window over merging on timeout alone.
 - If a review comment points out a real functional gap, either fix it or track it in GitHub issues.
 - If you run target-side checks directly against `out/llvm-build`, sync `overlay` into `out/llvm-src` first via `python3 -m scripts.bootstrap_llvm`.
 
