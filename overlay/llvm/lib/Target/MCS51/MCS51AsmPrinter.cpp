@@ -64,6 +64,14 @@ private:
     emitMCInst(MCS51::MOVR_b, {MCOperand::createReg(Dst)});
   }
 
+  void emitMoveAToB() { emitMCInst(MCS51::MOVB_a, {}); }
+
+  static uint8_t getImm8Value(const MachineOperand &MO) {
+    if (!MO.isImm())
+      report_fatal_error("Unsupported non-immediate MCS51 operand");
+    return static_cast<uint8_t>(MO.getImm());
+  }
+
   void emitLoadA(const MachineOperand &Src) {
     if (Src.isReg()) {
       if (Src.getReg() == MCS51::A)
@@ -103,6 +111,12 @@ private:
     emitMoveAToReg(MI->getOperand(0).getReg());
   }
 
+  void emitLoadAWithBias(const MachineOperand &Src, bool Bias) {
+    emitLoadA(Src);
+    if (Bias)
+      emitMCInst(MCS51::XRLA_i, {MCOperand::createImm(0x80)});
+  }
+
   void emitComparePseudo(const MachineInstr *MI) {
     const uint8_t Flags = static_cast<uint8_t>(MI->getOperand(3).getImm());
     const MachineOperand &LHS = MI->getOperand(1);
@@ -121,15 +135,33 @@ private:
           (Flags & MCS51CmpFlags::SwapOperands) ? RHS : LHS;
       const MachineOperand &Second =
           (Flags & MCS51CmpFlags::SwapOperands) ? LHS : RHS;
+      const bool BiasFirst = (Flags & MCS51CmpFlags::SwapOperands)
+                                 ? (Flags & MCS51CmpFlags::BiasRHS)
+                                 : (Flags & MCS51CmpFlags::BiasLHS);
+      const bool BiasSecond = (Flags & MCS51CmpFlags::SwapOperands)
+                                  ? (Flags & MCS51CmpFlags::BiasLHS)
+                                  : (Flags & MCS51CmpFlags::BiasRHS);
 
-      emitLoadA(First);
-      emitMCInst(MCS51::CLR_C, {});
-      if (Second.isReg())
-        emitMCInst(MCS51::SUBBA_r, {lowerPseudoOperand(Second)});
-      else if (Second.isImm())
-        emitMCInst(MCS51::SUBBA_i, {lowerPseudoOperand(Second)});
-      else
-        report_fatal_error("Unsupported MCS51 comparison RHS");
+      if (Second.isReg() && BiasSecond) {
+        emitLoadAWithBias(Second, true);
+        emitMoveAToB();
+        emitLoadAWithBias(First, BiasFirst);
+        emitMCInst(MCS51::CLR_C, {});
+        emitMCInst(MCS51::SUBBA_b, {});
+      } else {
+        emitLoadAWithBias(First, BiasFirst);
+        emitMCInst(MCS51::CLR_C, {});
+        if (Second.isReg()) {
+          emitMCInst(MCS51::SUBBA_r, {lowerPseudoOperand(Second)});
+        } else if (Second.isImm()) {
+          uint8_t Imm = getImm8Value(Second);
+          if (BiasSecond)
+            Imm ^= 0x80;
+          emitMCInst(MCS51::SUBBA_i, {MCOperand::createImm(Imm)});
+        } else {
+          report_fatal_error("Unsupported MCS51 comparison RHS");
+        }
+      }
     }
     emitMCInst(MCS51::CLR_A, {});
     emitMCInst(MCS51::RLC_A, {});

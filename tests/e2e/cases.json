@@ -159,5 +159,33 @@
     "function": "ne_imm_u8",
     "args": [7],
     "expected": 1
+  },
+  {
+    "name": "slt_i8",
+    "file": "slt_i8.c",
+    "function": "slt_i8",
+    "args": [255, 1],
+    "expected": 1
+  },
+  {
+    "name": "sgt_i8",
+    "file": "sgt_i8.c",
+    "function": "sgt_i8",
+    "args": [1, 255],
+    "expected": 1
+  },
+  {
+    "name": "sge_imm_i8",
+    "file": "sge_imm_i8.c",
+    "function": "sge_imm_i8",
+    "args": [3],
+    "expected": 1
+  },
+  {
+    "name": "sle_imm_i8",
+    "file": "sle_imm_i8.c",
+    "function": "sle_imm_i8",
+    "args": [3],
+    "expected": 0
   }
 ]

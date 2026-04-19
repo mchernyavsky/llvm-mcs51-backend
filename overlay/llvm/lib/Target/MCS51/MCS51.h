@@ -41,6 +41,8 @@ enum Flags : uint8_t {
   SwapOperands = 1u << 0,
   InvertResult = 1u << 1,
   UseXorNonZero = 1u << 2,
+  BiasLHS = 1u << 3,
+  BiasRHS = 1u << 4,
 };
 } // namespace MCS51CmpFlags
 

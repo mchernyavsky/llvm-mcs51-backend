@@ -89,6 +89,9 @@ let Defs = [A], isAsCheapAsAMove = 1 in {
 }
 
 let Defs = [B], isAsCheapAsAMove = 1 in {
+  def MOVB_a : MCS51Inst<"mov b, a", (outs), (ins)> {
+    let Size = 2;
+  }
   def MOVB_r : MCS51Inst<"mov b, $src", (outs), (ins GPR8:$src)> {
     let Size = 2;
   }
@@ -140,6 +143,9 @@ let Defs = [PSW] in
   def CLR_C : MCS51Inst<"clr c", (outs), (ins)>;
 
 let Defs = [A, PSW], Uses = [A, PSW] in {
+  def SUBBA_b : MCS51Inst<"subb a, b", (outs), (ins)> {
+    let Size = 2;
+  }
   def SUBBA_r : MCS51Inst<"subb a, $src", (outs), (ins GPR8:$src)>;
   def SUBBA_i : MCS51Inst<"subb a, $src", (outs), (ins i8imm:$src)> {
     let Size = 2;
