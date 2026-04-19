@@ -28,7 +28,7 @@ The runtime pipeline tests LLVM output directly. The backend emits `MCS-51` mach
 
 ## Testing
 
-The project supports three validation paths:
+The project supports two validation paths:
 
 ### 1. Local Toolchain Install
 
@@ -40,17 +40,7 @@ make build
 make test
 ```
 
-### 2. Docker
-
-If you do not want to install the toolchain locally, run the same test flow inside the provided container:
-
-```bash
-make docker-test
-```
-
-This builds the local Docker image and runs `make test` inside it.
-
-### 3. CI
+### 2. CI
 
 GitHub Actions runs the same `make test` entrypoint on `ubuntu-24.04`, restoring both `ccache` and the LLVM build directory to speed up repeated LLVM rebuilds.
 

@@ -12,15 +12,13 @@ This repository is an experimental LLVM backend for the Intel MCS-51 / 8051 fami
 
 ## Testing
 
-There are three supported ways to validate the project:
+There are two supported ways to validate the project:
 
 1. Local toolchain install
    - `make bootstrap`
    - `make build`
    - `make test`
-2. Docker
-   - `make docker-test`
-3. CI
+2. CI
    - GitHub Actions runs the same `make test` path via `.github/workflows/ci.yml`
 
 When adding backend functionality, prefer to add both:
