@@ -1,4 +1,4 @@
-; RUN: not --crash llc -march=mcs51 -mtriple=mcs51-unknown-elf -verify-machineinstrs -filetype=asm -o /dev/null < %s 2>&1 | FileCheck %s
+; RUN: not --crash llc -march=mcs51 -mtriple=mcs51-unknown-elf -verify-machineinstrs -filetype=asm -o %t < %s 2>&1 | FileCheck %s
 
 define i8 @shl_var_u8(i8 %a, i8 %amt) {
 entry:
