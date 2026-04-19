@@ -353,3 +353,84 @@ entry:
 ; CHECK: mov r7, a
 ; CHECK: mov a, r7
 ; CHECK: ret
+
+define i8 @slt_i8(i8 %a, i8 %b) {
+entry:
+  %cmp = icmp slt i8 %a, %b
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: slt_i8:
+; CHECK: mov a, r6
+; CHECK: xrl a, #128
+; CHECK: mov b, a
+; CHECK: mov a, r7
+; CHECK: xrl a, #128
+; CHECK: clr c
+; CHECK: subb a, b
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @sgt_i8(i8 %a, i8 %b) {
+entry:
+  %cmp = icmp sgt i8 %a, %b
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: sgt_i8:
+; CHECK: mov a, r7
+; CHECK: xrl a, #128
+; CHECK: mov b, a
+; CHECK: mov a, r6
+; CHECK: xrl a, #128
+; CHECK: clr c
+; CHECK: subb a, b
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @sge_imm_i8(i8 %a) {
+entry:
+  %cmp = icmp sge i8 %a, -5
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: sge_imm_i8:
+; CHECK: mov a, r7
+; CHECK: xrl a, #128
+; CHECK: mov b, a
+; CHECK: mov a, #250
+; CHECK: xrl a, #128
+; CHECK: clr c
+; CHECK: subb a, b
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret
+
+define i8 @sle_imm_i8(i8 %a) {
+entry:
+  %cmp = icmp sle i8 %a, -5
+  %res = zext i1 %cmp to i8
+  ret i8 %res
+}
+
+; CHECK-LABEL: sle_imm_i8:
+; CHECK: mov a, r7
+; CHECK: xrl a, #128
+; CHECK: clr c
+; CHECK: subb a, #124
+; CHECK: clr a
+; CHECK: rlc a
+; CHECK: mov r7, a
+; CHECK: mov a, r7
+; CHECK: ret

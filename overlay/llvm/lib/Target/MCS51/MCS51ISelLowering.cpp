@@ -34,9 +34,20 @@ uint8_t getCompareFlags(ISD::CondCode CC) {
     return MCS51CmpFlags::SwapOperands;
   case ISD::SETULE:
     return MCS51CmpFlags::SwapOperands | MCS51CmpFlags::InvertResult;
+  case ISD::SETLT:
+    return MCS51CmpFlags::BiasLHS | MCS51CmpFlags::BiasRHS;
+  case ISD::SETGE:
+    return MCS51CmpFlags::BiasLHS | MCS51CmpFlags::BiasRHS |
+           MCS51CmpFlags::InvertResult;
+  case ISD::SETGT:
+    return MCS51CmpFlags::BiasLHS | MCS51CmpFlags::BiasRHS |
+           MCS51CmpFlags::SwapOperands;
+  case ISD::SETLE:
+    return MCS51CmpFlags::BiasLHS | MCS51CmpFlags::BiasRHS |
+           MCS51CmpFlags::SwapOperands | MCS51CmpFlags::InvertResult;
   default:
     report_fatal_error(
-        "MCS51 MVP backend supports only i8 eq/ne and unsigned ordering comparisons");
+        "MCS51 MVP backend supports only i8 eq/ne and signed/unsigned ordering comparisons");
   }
 }
 
@@ -165,7 +176,7 @@ SDValue MCS51TargetLowering::LowerSetCC(SDValue Op,
   if (Op.getOperand(0).getValueType() != MVT::i8 ||
       Op.getOperand(1).getValueType() != MVT::i8)
     report_fatal_error(
-        "MCS51 MVP backend supports only i8 eq/ne and unsigned ordering comparisons");
+        "MCS51 MVP backend supports only i8 eq/ne and signed/unsigned ordering comparisons");
 
   return emitCompareMaterialization(
       DAG, SDLoc(Op), Op.getValueType(), Op.getOperand(0), Op.getOperand(1),
@@ -240,7 +251,7 @@ SDValue MCS51TargetLowering::LowerZeroExtend(SDValue Op,
   if (SetCC.getOperand(0).getValueType() != MVT::i8 ||
       SetCC.getOperand(1).getValueType() != MVT::i8)
     report_fatal_error(
-        "MCS51 MVP backend supports only i8 eq/ne and unsigned ordering comparisons");
+        "MCS51 MVP backend supports only i8 eq/ne and signed/unsigned ordering comparisons");
 
   return emitCompareMaterialization(
       DAG, SDLoc(Op), Op.getValueType(), SetCC.getOperand(0),
